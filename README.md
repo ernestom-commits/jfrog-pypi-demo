@@ -13,11 +13,13 @@ A minimal Python Flask service used to demonstrate JFrog Platform capabilities f
 
 ## CVEs in this demo
 
+Packages are pinned below CVSS 8.0 so Curation allows download; Xray still flags them.
+
 | Package | Version | CVE | CVSS | Finding |
 |---------|---------|-----|------|---------|
-| Pillow | 9.0.0 | CVE-2022-22817 | 9.8 Critical | Arbitrary code execution via image processing |
-| PyYAML | 5.4.1 | CVE-2020-14343 | 9.8 Critical | Deserialization of arbitrary Python objects |
+| Werkzeug | 2.2.2 | CVE-2023-25577 | 7.5 High | Multipart form-data parser DoS via large boundaries |
 | requests | 2.27.1 | CVE-2023-32681 | 6.1 Medium | Proxy-Authorization header leak on redirect |
+| urllib3 | 1.26.6 | CVE-2023-43804 | 5.9 Medium | Cookie header leaked on cross-host redirect |
 
 ## Quick start (local)
 
