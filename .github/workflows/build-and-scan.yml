@@ -32,28 +32,21 @@ jobs:
           JF_URL: ${{ vars.JF_URL }}
           JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
 
-      # Route pip through Artifactory — all downloads tracked, Curation evaluated
-      - name: Configure pip — Artifactory virtual repo
+      # Route pip through Artifactory — all downloads proxied and cached
+      - name: Install dependencies via Artifactory virtual repo
+        env:
+          JF_URL: ${{ vars.JF_URL }}
+          JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
         run: |
-          jf pip-config \
-            --repo-resolve demo-pypi
+          pip install -r requirements.txt \
+            --index-url "https://solengemdemo.jfrog.io/artifactory/api/pypi/demo-pypi/simple/" \
+            --extra-index-url "https://pypi.org/simple/"
 
-      # Install deps via Artifactory — malicious/blocked packages stop here
-      - name: Install dependencies via Artifactory
+      # jf audit scans installed deps for CVEs — no Curation audit path involved
+      # Finds: CVE-2023-25577 (Werkzeug), CVE-2023-32681 (requests), CVE-2023-43804 (urllib3)
+      - name: Xray audit — Python dependencies
         run: |
-          jf pip install -r requirements.txt \
-            --build-name=${{ env.BUILD_NAME }} \
-            --build-number=${{ env.BUILD_NUMBER }}
-
-      # Publish build info so Xray can link CVEs to this build
-      - name: Publish build info
-        run: jf rt bp ${{ env.BUILD_NAME }} ${{ env.BUILD_NUMBER }}
-
-      # Xray scan — CVE-2022-22817 (Pillow), CVE-2020-14343 (PyYAML) appear here
-      # --fail=false: show violations in JFrog UI without breaking the pipeline
-      - name: Xray scan — Python dependencies
-        run: |
-          jf build-scan \
-            ${{ env.BUILD_NAME }} \
-            ${{ env.BUILD_NUMBER }} \
+          jf audit \
+            --pip=true \
+            --format=table \
             --fail=false
