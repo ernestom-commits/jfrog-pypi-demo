@@ -7,8 +7,7 @@ A minimal Python Flask service used to demonstrate JFrog Platform capabilities f
 | JFrog Capability | How |
 |-----------------|-----|
 | PyPI via Artifactory | `pip install` routes through `demo-pypi` virtual — Curation evaluated at download |
-| Xray CVE scan | `Pillow==9.0.0` (CVE-2022-22817), `PyYAML==5.4.1` (CVE-2020-14343) detected |
-| Build info | `jf pip install` publishes full dependency graph to Artifactory |
+| Xray CVE scan | Werkzeug 2.2.2, requests 2.27.1, urllib3 1.26.6 scanned via `jf scan` on downloaded wheels |
 | FrogBot | PR scan comments with CVE findings + fix versions |
 
 ## CVEs in this demo
