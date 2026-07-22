@@ -1,0 +1,13 @@
+- params:
+    git:
+      repoName: jfrog-pypi-demo
+      branches:
+        - main
+    scan:
+      includeAllVulnerabilities: true
+      fixableOnly: false
+      minSeverity: "Medium"
+      language: "python"
+      packageDescriptor: "requirements.txt"
+    jas:
+      enabled: true
