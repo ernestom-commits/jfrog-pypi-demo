@@ -1,0 +1,43 @@
+name: FrogBot — PyPI Demo PR Scan
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+  schedule:
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  contents: read
+  id-token: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  frogbot-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
+        env:
+          JF_URL: ${{ vars.JF_URL }}
+          JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+
+      - name: Run FrogBot
+        uses: jfrog/frogbot@v2
+        env:
+          JF_URL: ${{ vars.JF_URL }}
+          JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
+          JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JF_GIT_PROVIDER: github
+          JF_GIT_OWNER: ${{ github.repository_owner }}
+          JF_GIT_REPO: ${{ github.event.repository.name }}
+          JF_GIT_BASE_BRANCH: main
