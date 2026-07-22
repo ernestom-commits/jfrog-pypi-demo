@@ -1,15 +1,16 @@
 # JFrog Demo — Python Catalog API
 # Intentionally pinned to versions with known CVEs for Xray demo.
+# Packages are below CVSS 8.0 so Curation allows download; Xray still flags them.
 # DO NOT upgrade without updating the runbook.
 
-# CVE-2022-22817 (CVSS 9.8) — PIL arbitrary code execution via image processing
-Pillow==9.0.0
+# CVE-2023-25577 (CVSS 7.5) — Werkzeug multipart DoS via large boundaries
+Werkzeug==2.2.2
 
-# CVE-2020-14343 (CVSS 9.8) — YAML deserialization of arbitrary Python objects
-PyYAML==5.4.1
-
-# CVE-2023-32681 (CVSS 6.1) — requests leaks Proxy-Authorization header on redirect
+# CVE-2023-32681 (CVSS 6.1) — requests leaks Proxy-Authorization on redirect
 requests==2.27.1
+
+# CVE-2023-43804 (CVSS 5.9) — urllib3 leaks Cookie header on redirect to different host
+urllib3==1.26.6
 
 # Web framework (no known CVE — clean dep for contrast)
 flask==2.3.3
