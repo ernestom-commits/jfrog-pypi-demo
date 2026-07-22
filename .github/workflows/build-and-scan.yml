@@ -32,17 +32,16 @@ jobs:
           JF_URL: ${{ vars.JF_URL }}
           JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
 
-      # Route pip through Artifactory — all downloads proxied and cached
-      - name: Install dependencies via Artifactory virtual repo
-        env:
-          JF_URL: ${{ vars.JF_URL }}
-          JF_ACCESS_TOKEN: ${{ secrets.JF_ACCESS_TOKEN }}
-        run: |
-          pip install -r requirements.txt \
-            --index-url "https://solengemdemo.jfrog.io/artifactory/api/pypi/demo-pypi/simple/" \
-            --extra-index-url "https://pypi.org/simple/"
+      # Write Artifactory credentials into pip config (does NOT use Curation audit path)
+      - name: Configure pip — Artifactory virtual repo
+        run: jf pip-config --repo-resolve demo-pypi
 
-      # jf audit scans installed deps for CVEs — no Curation audit path involved
+      # pip install uses the configured Artifactory index URL with credentials injected
+      # Curation evaluates packages at the remote proxy layer (not via audit API)
+      - name: Install dependencies via Artifactory
+        run: pip install -r requirements.txt
+
+      # jf audit scans installed packages for CVEs
       # Finds: CVE-2023-25577 (Werkzeug), CVE-2023-32681 (requests), CVE-2023-43804 (urllib3)
       - name: Xray audit — Python dependencies
         run: |
