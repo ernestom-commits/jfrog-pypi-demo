@@ -41,11 +41,18 @@ jobs:
       - name: Install dependencies via Artifactory
         run: pip install -r requirements.txt
 
-      # jf audit scans installed packages for CVEs
-      # Finds: CVE-2023-25577 (Werkzeug), CVE-2023-32681 (requests), CVE-2023-43804 (urllib3)
-      - name: Xray audit — Python dependencies
+      # Download wheel files so jf scan can inspect them directly (no pip re-install)
+      # jf audit --pip=true re-runs pip internally and triggers Curation on build deps;
+      # jf scan on .whl files hits Xray indexer only, no package resolution step.
+      - name: Download wheels for Xray scan
         run: |
-          jf audit \
-            --pip=true \
+          mkdir -p wheels
+          pip download -r requirements.txt -d wheels/ --no-deps
+
+      # Xray scan — operates on local .whl files via Xray indexer
+      # Finds: CVE-2023-25577 (Werkzeug 2.2.2), CVE-2023-32681 (requests 2.27.1), CVE-2023-43804 (urllib3 1.26.6)
+      - name: Xray scan — Python wheels
+        run: |
+          jf scan wheels/ \
             --format=table \
             --fail=false
