@@ -12,5 +12,5 @@ requests==2.27.1
 # CVE-2023-43804 (CVSS 5.9) — urllib3 leaks Cookie header on redirect to different host
 urllib3==1.26.6
 
-# Web framework (no known CVE — clean dep for contrast)
-flask==2.3.3
+# Web framework compatible with Werkzeug 2.2.x (no CVE — clean dep for contrast)
+flask==2.2.5
